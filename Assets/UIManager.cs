@@ -1,20 +1,39 @@
 using UnityEngine;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
     public GameObject endGamePanel;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public TMP_Text scoreText;
+    public TMP_Text timeText;
+    public TMP_Text healthText;
+    public TMP_Text endGameText;
+    public AudioSource gameOverAudio;
 
-    // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        if(GameController.gameOver)
+        GameController.Tick(Time.deltaTime);
+
+        if (scoreText != null)
+            scoreText.text = "Score: " + GameController.score + "/" + GameController.TotalCollectables;
+        if (timeText != null)
+            timeText.text = "Tempo: " + GameController.TimeRemaining.ToString("0.0") + "s";
+        if (healthText != null)
+            healthText.text = "Vida: " + GameController.health;
+
+        if (GameController.gameOver)
         {
-            endGamePanel.SetActive(true);
+            if (endGamePanel != null && !endGamePanel.activeSelf)
+            {
+                endGamePanel.SetActive(true);
+                if (gameOverAudio != null) gameOverAudio.Play();
+            }
+
+            if (endGameText != null)
+            {
+                string result = GameController.hasWon ? "Vitória!" : "Game Over";
+                endGameText.text = result + "\nTempo: " + GameController.finalTime.ToString("0.0") + "s\nScore: " + GameController.score + "/" + GameController.TotalCollectables;
+            }
         }
     }
 }

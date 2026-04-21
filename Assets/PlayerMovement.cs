@@ -1,21 +1,25 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D rb;
-    AudioSource audio;
+    private AudioSource audioSource;
+    private SpriteRenderer spriteRenderer;
     public float speed;
+    public AudioClip hitSound;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        audio = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
+        if (GameController.gameOver) return;
+
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
@@ -30,7 +34,25 @@ public class PlayerMovement : MonoBehaviour
         {
             Destroy(other.gameObject);
             GameController.Collect();
-            audio.Play();
+            audioSource.Play();
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.GetComponent<Enemy>() != null)
+        {
+            GameController.TakeDamage();
+            if (hitSound != null) audioSource.PlayOneShot(hitSound);
+            StartCoroutine(FlashRed());
+        }
+    }
+
+    IEnumerator FlashRed()
+    {
+        Color original = spriteRenderer.color;
+        spriteRenderer.color = Color.red;
+        yield return new WaitForSeconds(0.15f);
+        spriteRenderer.color = original;
     }
 }
