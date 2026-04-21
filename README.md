@@ -30,4 +30,4 @@ Jogo 2D top-down onde você precisa coletar 4 triângulos em menos de 20 segundo
 
 ## Build
 
-O jogo foi publicado em WebGL no itch.io.
+O jogo foi publicado em WebGL no itch.io. https://carneirogabrielly.itch.io/cata-triangulo
